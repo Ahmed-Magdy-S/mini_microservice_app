@@ -13,7 +13,6 @@ app.MapPost("/events", async httpContext => {
     await httpClient.PostAsJsonAsync(new Uri("http://localhost:4000/events"),eventReceived); // for Posts service
     await httpClient.PostAsJsonAsync(new Uri("http://localhost:4001/events"),eventReceived); // for Comments service
     await httpClient.PostAsJsonAsync(new Uri("http://localhost:4002/events"),eventReceived); // for Query service
-    httpClient.Dispose();
 
     await httpContext.Response.WriteAsJsonAsync(new Hashtable{["status"] = "Ok"});
 

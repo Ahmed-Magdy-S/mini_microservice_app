@@ -7,6 +7,8 @@ builder.Services.AddCors();
 
 var app = builder.Build();
 
+HttpClient httpClient = new ();
+
 
 app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod() );
 
@@ -22,8 +24,32 @@ app.MapPost("/posts", async httpContext => {
     post["id"] = id;
     //Add every post to posts 
     posts[id] = post;
+
+    var eventEmitted = new Hashtable
+    {
+        ["type"] = "PostCreated",
+        ["data"] = posts[id]
+    };
+
+    await httpClient.PostAsJsonAsync("http://localhost:4005/events", eventEmitted);
+
     httpContext.Response.StatusCode = 201;
     await httpContext.Response.WriteAsJsonAsync(posts[id]);
 });
+
+app.MapPost("/events", async httpContext =>
+{
+    try
+    {
+     //   await httpContext.Response.WriteAsJsonAsync(httpContext.Request.Body);
+        Console.WriteLine("event Reveived");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("error");
+
+    }
+});
+
 
 app.Run();
